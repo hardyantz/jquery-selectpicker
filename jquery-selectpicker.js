@@ -1,3 +1,9 @@
+/*!
+ * Jquery Selectpicker v1.1.0, https://git.io/vDjMR
+ * ===================================
+ * jQuery plugin for autocomplete & dropdown
+ *
+ */
 $(function(){
     $.widget( "ui.combobox", {
         _create: function() {
@@ -19,24 +25,24 @@ $(function(){
                     source: $.proxy( this, "_source" )
                 })
                 .data("ui-autocomplete")._renderItem = function(ul, item) {
-                    console.log(item);
-                    if (typeof item.value === 'undefined') {
+                
+                    if (typeof item.value === 'undefined' || !item.value) {
                         var $el = $("<li>");
                         $el.hide();
                         return $el.appendTo(ul);
                     }
                     var $el = $("<li>");
-                    if (item.group == true) {console.log(item.label + "1");
+                    if (item.group == true) {
                         $el.addClass("ui-state-disabled")
                            .text(item.label);
 
-                    } else if (item.group == false) {console.log(item.label + "2");
+                    } else if (item.group == false) {
                         $el.addClass("ui-child-label")
                            .text(item.label);
-                    } else { console.log(item.label + "3");
+                    } else {
                         $el.append("<a>" + item.label + "</a>");
                     }
-
+                    
                     return $el.appendTo(ul);
             };
 
@@ -78,10 +84,12 @@ $(function(){
      
         _source: function( request, response ) {
             var matcher = new RegExp( $.ui.autocomplete.escapeRegex(request.term), "i" );
+            
             if (this.element.children("optgroup").length > 0 ) {
                 response(this.element.children( "optgroup" ).map(function() {
-                    var responsevar = {};
+                    var responsevar = [];
                     var text_label = $( this ).attr('label');
+                    
                     if (  !request.term || matcher.test(text_label) ) {
                         var response = {
                             label: text_label,
@@ -89,7 +97,7 @@ $(function(){
                             group: true,
                             option: this
                         };
-                        $.extend(responsevar, response);
+                        responsevar.push(response);
                     }
                     $(this).children('option').map(function() {
                         var text = $(this).text();
@@ -101,7 +109,7 @@ $(function(){
                                 group: false,
                                 option: this
                             };
-                            $.extend(responsevar, response);
+                            responsevar.push(response);
                         }
                     });
                     return responsevar;
